@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# soma by Nelson Jeppesen <jeppesen.io>
+#
+#   listen to somafm from the terminal
+#
+#  requirements:
+#     bash
+#     fzf
+
+# exit when script uses undeclared variables
+#set -o nounset
+
+SCRIPT_NAME="${0##*"/"}"
+SCRIPT_PATH="${0%"${SCRIPT_NAME}"}"
+VERSION='0.1.0'
+
+VPN_PROFILES="$(nmcli -f type,name, con show | grep '^vpn' | awk '{print $2}')"
+
+echo "${VPN_PROFILES}" | fzf \
+  -i \
+  --exact \
+  --exit-0 \
+  --layout=reverse \
+  --no-hscroll \
+  --no-sort \
+  --pointer="※" \
+  --prompt="qv ❯ " \
+  --query="${1}" \
+  --select-1 \
+  --with-nth=1 \
+  --multi |
+  xargs --max-procs 9 -L1 nmcli con up id
